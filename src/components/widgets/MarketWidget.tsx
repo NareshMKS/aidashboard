@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
 import { Line, LineChart, ResponsiveContainer } from 'recharts'
+import { parseApiError } from '@/lib/apiErrors'
 import { fetchMultipleStocks } from '@/api/stocks'
 import { fetchCryptoPrice } from '@/api/crypto'
 import { WidgetSkeleton } from '@/components/WidgetSkeleton'
@@ -65,7 +66,11 @@ export function MarketWidget() {
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Top Stocks
             </p>
-            {stocksQuery.data?.length ? (
+            {stocksQuery.isError ? (
+              <p className="text-xs text-amber-300">{parseApiError(stocksQuery.error)}</p>
+            ) : stocksQuery.isLoading ? (
+              <p className="text-xs text-muted-foreground">Loading stock data…</p>
+            ) : stocksQuery.data?.length ? (
               <div className="space-y-2">
                 {stocksQuery.data.map((stock) => (
                   <div
@@ -88,7 +93,7 @@ export function MarketWidget() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Loading stock data…</p>
+              <p className="text-xs text-muted-foreground">Stock data unavailable</p>
             )}
           </div>
 
@@ -96,7 +101,11 @@ export function MarketWidget() {
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Crypto
             </p>
-            {cryptoQuery.data?.length ? (
+            {cryptoQuery.isError ? (
+              <p className="text-xs text-amber-300">{parseApiError(cryptoQuery.error)}</p>
+            ) : cryptoQuery.isLoading ? (
+              <p className="text-xs text-muted-foreground">Loading crypto data…</p>
+            ) : cryptoQuery.data?.length ? (
               <div className="space-y-2">
                 {cryptoQuery.data.map((coin) => (
                   <div
@@ -137,7 +146,7 @@ export function MarketWidget() {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Loading crypto data…</p>
+              <p className="text-xs text-muted-foreground">Crypto data unavailable</p>
             )}
           </div>
         </div>

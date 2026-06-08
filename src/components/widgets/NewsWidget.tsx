@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { ExternalLink, Newspaper, RefreshCw } from 'lucide-react'
+import { parseApiError } from '@/lib/apiErrors'
 import { fetchTechNews } from '@/api/news'
 import { WidgetSkeleton } from '@/components/WidgetSkeleton'
 import { WidgetScrollArea } from '@/components/widgets/WidgetScrollArea'
@@ -28,16 +29,14 @@ export function NewsWidget() {
       footer={
         <p className="border-t border-white/10 pt-2 text-[10px] text-muted-foreground">
           {data
-            ? `${data.length} live articles from NewsAPI · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}`
-            : 'Live headlines via NewsAPI'}
+            ? `${data.length} live articles · updated ${new Date(dataUpdatedAt).toLocaleTimeString()}`
+            : 'Live tech headlines'}
         </p>
       }
     >
       {error ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-          <p className="text-sm text-muted-foreground">
-            {error instanceof Error ? error.message : 'Unable to load news'}
-          </p>
+          <p className="text-sm text-muted-foreground">{parseApiError(error)}</p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             Retry
           </Button>

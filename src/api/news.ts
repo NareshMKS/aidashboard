@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/axios'
 import type { NewsArticle } from '@/types'
 
 interface NewsApiResponse {
+  source?: string
   articles: Array<{
     title: string
     description: string | null

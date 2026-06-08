@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Cloud, Droplets, Wind } from 'lucide-react'
+import { parseApiError } from '@/lib/apiErrors'
 import { fetchWeather } from '@/api/weather'
 import { GlassCard } from '@/components/GlassCard'
 import { WidgetSkeleton } from '@/components/WidgetSkeleton'
@@ -18,7 +19,7 @@ export function WeatherWidget() {
     return (
       <GlassCard title="Weather" icon={<Cloud className="h-4 w-4" />} gradient>
         <p className="text-sm text-muted-foreground">
-          {error instanceof Error ? error.message : 'Unable to load weather'}
+          {parseApiError(error)}
         </p>
       </GlassCard>
     )

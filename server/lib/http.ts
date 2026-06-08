@@ -4,6 +4,17 @@ export interface HandlerResult {
   headers?: Record<string, string>
 }
 
+function extractErrorMessage(data: unknown, fallback: string): string {
+  if (typeof data === 'string') return data
+  if (data && typeof data === 'object') {
+    const obj = data as Record<string, unknown>
+    if (typeof obj.message === 'string') return obj.message
+    if (typeof obj.error === 'string') return obj.error
+    if (typeof obj.status === 'string') return String(obj.message ?? obj.status)
+  }
+  return fallback
+}
+
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, init)
   const text = await response.text()
@@ -12,15 +23,11 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
   try {
     data = text ? JSON.parse(text) : null
   } catch {
-    throw new Error(text || `HTTP ${response.status}`)
+    throw new Error(text.slice(0, 200) || `HTTP ${response.status}`)
   }
 
   if (!response.ok) {
-    const message =
-      (data as { message?: string })?.message ||
-      (data as { error?: string })?.error ||
-      `HTTP ${response.status}`
-    throw new Error(message)
+    throw new Error(extractErrorMessage(data, `HTTP ${response.status}`))
   }
 
   return data as T
@@ -35,7 +42,7 @@ export function jsonResponse(body: unknown, status = 200): HandlerResult {
 }
 
 export function errorResponse(error: unknown, status = 500): HandlerResult {
-  const message = error instanceof Error ? error.message : 'Internal server error'
+  const message = error instanceof Error ? error.message : extractErrorMessage(error, 'Internal server error')
   const code = message.toLowerCase().includes('missing') ? 503 : status
   return jsonResponse({ error: message, message }, code)
 }

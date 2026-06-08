@@ -1,14 +1,14 @@
 /** Server-side environment variables (Vercel + local dev middleware). */
 export function getWeatherKey(): string | undefined {
-  return process.env.VITE_WEATHER_API_KEY
+  return process.env.VITE_WEATHER_API_KEY || process.env.WEATHER_API_KEY
 }
 
 export function getNewsKey(): string | undefined {
-  return process.env.VITE_NEWS_API_KEY
+  return process.env.VITE_NEWS_API_KEY || process.env.NEWS_API_KEY
 }
 
 export function getAlphaVantageKey(): string | undefined {
-  return process.env.VITE_ALPHA_VANTAGE_KEY
+  return process.env.VITE_ALPHA_VANTAGE_KEY || process.env.ALPHA_VANTAGE_KEY
 }
 
 export function getGithubToken(): string | undefined {

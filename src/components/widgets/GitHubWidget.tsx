@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Code2, ExternalLink, GitBranch, RefreshCw, Star, Users } from 'lucide-react'
+import { parseApiError } from '@/lib/apiErrors'
 import { fetchGithubStats } from '@/api/github'
 import { WidgetSkeleton } from '@/components/WidgetSkeleton'
 import { WidgetScrollArea } from '@/components/widgets/WidgetScrollArea'
@@ -36,9 +37,7 @@ export function GitHubWidget() {
       >
         <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
           <p className="text-sm text-amber-300">Could not load GitHub data</p>
-          <p className="max-w-xs text-xs text-muted-foreground">
-            {error instanceof Error ? error.message : 'Unknown error'}
-          </p>
+          <p className="max-w-xs text-xs text-muted-foreground">{parseApiError(error)}</p>
           <Button variant="outline" size="sm" className="mt-2" onClick={() => refetch()}>
             Retry
           </Button>
