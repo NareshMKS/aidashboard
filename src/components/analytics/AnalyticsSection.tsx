@@ -53,8 +53,8 @@ export function AnalyticsSection() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <GlassCard title="Productivity Rate" gradient>
           <div className="flex items-center gap-4">
-            <div className="relative h-32 w-32">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="relative h-32 w-32 shrink-0" style={{ minWidth: 128, minHeight: 128 }}>
+              <ResponsiveContainer width={128} height={128}>
                 <PieChart>
                   <Pie
                     data={taskPieData.length ? taskPieData : [{ name: 'No tasks', value: 1 }]}
@@ -95,8 +95,8 @@ export function AnalyticsSection() {
         </GlassCard>
 
         <GlassCard title="Task Activity (7 days)" gradient>
-          <div className="h-40">
-            <ResponsiveContainer width="100%" height="100%">
+          <div className="h-40 w-full" style={{ minHeight: 160 }}>
+            <ResponsiveContainer width="100%" height={160} minWidth={0}>
               <BarChart data={weeklyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                 <XAxis dataKey="day" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} />
@@ -116,9 +116,9 @@ export function AnalyticsSection() {
         </GlassCard>
 
         <GlassCard title="Market Trends (24h)" gradient>
-          <div className="h-40">
+          <div className="h-40 w-full" style={{ minHeight: 160 }}>
             {marketTrendData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={160} minWidth={0}>
                 <LineChart data={marketTrendData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
                   <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} axisLine={false} />

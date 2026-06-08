@@ -1,5 +1,5 @@
 import { getNewsKey } from '../lib/env'
-import { errorResponse, fetchJson, jsonResponse, type HandlerResult } from '../lib/http'
+import { fetchJson, jsonResponse, type HandlerResult } from '../lib/http'
 
 interface NewsApiResponse {
   status: string
@@ -70,20 +70,16 @@ async function fetchNewsApi(query: Record<string, string | string[] | undefined>
 export async function handleNews(query: Record<string, string | string[] | undefined>): Promise<HandlerResult> {
   const pageSize = Math.min(Number(query.pageSize) || 10, 20)
 
+  if (!getNewsKey()) {
+    const data = await fetchHackerNews(pageSize)
+    return jsonResponse({ ...data, source: 'Hacker News' })
+  }
+
   try {
     const data = await fetchNewsApi(query)
     return jsonResponse(data)
-  } catch (newsApiError) {
-    // NewsAPI blocks cloud/server IPs on free tier — fall back to Hacker News (free, no key)
-    try {
-      const data = await fetchHackerNews(pageSize)
-      return jsonResponse({ ...data, source: 'Hacker News (fallback)' })
-    } catch {
-      const msg =
-        newsApiError instanceof Error
-          ? newsApiError.message
-          : 'Failed to fetch news from all sources'
-      return errorResponse(new Error(msg), 502)
-    }
+  } catch {
+    const data = await fetchHackerNews(pageSize)
+    return jsonResponse({ ...data, source: 'Hacker News (fallback)' })
   }
 }

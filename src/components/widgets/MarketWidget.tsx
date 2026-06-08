@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
-import { Line, LineChart, ResponsiveContainer } from 'recharts'
 import { parseApiError } from '@/lib/apiErrors'
+import { MiniSparkline } from '@/components/charts/MiniSparkline'
 import { fetchMultipleStocks } from '@/api/stocks'
 import { fetchCryptoPrice } from '@/api/crypto'
 import { WidgetSkeleton } from '@/components/WidgetSkeleton'
@@ -119,18 +119,8 @@ export function MarketWidget() {
                       </p>
                     </div>
                     {coin.sparkline.length > 1 && (
-                      <div className="mx-2 h-8 w-16 shrink-0">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={coin.sparkline.map((v, i) => ({ i, v }))}>
-                            <Line
-                              type="monotone"
-                              dataKey="v"
-                              stroke={coin.change24h >= 0 ? '#34d399' : '#f87171'}
-                              strokeWidth={1.5}
-                              dot={false}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
+                      <div className="mx-2">
+                        <MiniSparkline data={coin.sparkline} positive={coin.change24h >= 0} />
                       </div>
                     )}
                     <span
