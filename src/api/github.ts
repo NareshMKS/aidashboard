@@ -1,8 +1,8 @@
 import { apiClient } from '@/lib/axios'
 import type { GitHubStats } from '@/types'
 
-const GITHUB_BASE = '/api/github'
-const OSSINSIGHT_BASE = '/api/ossinsight'
+const GITHUB_BASE = 'https://api.github.com'
+const OSSINSIGHT_BASE = 'https://api.ossinsight.io'
 
 interface GitHubProfile {
   login: string

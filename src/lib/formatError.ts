@@ -8,6 +8,12 @@ export function formatErrorMessage(value: unknown): string {
     const obj = value as Record<string, unknown>
     if (typeof obj.message === 'string') return obj.message
     if (typeof obj.error === 'string') return obj.error
+    if (obj.error && typeof obj.error === 'object') {
+      const nested = obj.error as Record<string, unknown>
+      if (typeof nested.message === 'string') {
+        return typeof nested.code === 'string' ? `${nested.code}: ${nested.message}` : nested.message
+      }
+    }
     if (typeof obj.status === 'string' && typeof obj.message === 'string') {
       return `${obj.status}: ${obj.message}`
     }
