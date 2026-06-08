@@ -10,11 +10,12 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const data = error.response?.data
     const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
+      (typeof data === 'object' && data !== null && 'message' in data && data.message) ||
+      (typeof data === 'object' && data !== null && 'error' in data && data.error) ||
       error.message ||
       'An unexpected error occurred'
-    return Promise.reject(new Error(message))
+    return Promise.reject(new Error(String(message)))
   },
 )

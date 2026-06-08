@@ -62,9 +62,23 @@ The agent uses OpenAI's function calling API. Each tool is defined in `src/tools
 
 **Agent instructions:** *"You are a personal IT assistant. Use available tools whenever real-time data is needed. Always prefer tool results over assumptions."*
 
-### API Proxy (CORS)
+### API Routes (Production + Local)
 
-NewsAPI, OpenWeather, and Alpha Vantage block direct browser requests. The Vite dev/preview server proxies these through `/api/*` routes, injecting API keys server-side from environment variables.
+External APIs with CORS restrictions or secret keys are called through `/api/*` server routes:
+
+| Route | Upstream API |
+|-------|-------------|
+| `/api/weather` | OpenWeatherMap |
+| `/api/news` | NewsAPI |
+| `/api/stocks` | Alpha Vantage |
+| `/api/github/*` | GitHub REST API |
+| `/api/yahoo/*` | Yahoo Finance |
+| `/api/ossinsight/*` | OSS Insight (GitHub fallback) |
+| `/api/crypto/*` | CoinGecko |
+
+- **Vercel production:** `api/` folder deploys as serverless functions (see `vercel.json`)
+- **Local dev/preview:** same handlers run via Vite middleware (`server/middleware.ts`)
+- API keys stay server-side; never exposed in the client bundle for proxied routes
 
 ## Setup
 
@@ -110,7 +124,25 @@ npm run build
 npm run preview
 ```
 
-> **Note:** The API proxy only works with `npm run dev` and `npm run preview`. For static hosting (Vercel, Netlify), deploy serverless functions or a backend proxy for CORS-restricted APIs.
+### Deploy to Vercel
+
+1. Push the repo to GitHub and import in [vercel.com](https://vercel.com)
+2. Framework preset: **Vite**
+3. Add environment variables in **Project Settings → Environment Variables**:
+
+| Variable | Required |
+|----------|----------|
+| `VITE_OPENAI_API_KEY` | Yes (AI agent) |
+| `VITE_WEATHER_API_KEY` | Yes (or Open-Meteo fallback) |
+| `VITE_NEWS_API_KEY` | Yes |
+| `VITE_ALPHA_VANTAGE_KEY` | Optional (Yahoo fallback) |
+| `VITE_GITHUB_USERNAME` | Yes |
+| `GITHUB_TOKEN` | Recommended (higher GitHub rate limit) |
+| `VITE_DEFAULT_CITY` | Optional |
+
+4. Deploy — Vercel automatically builds `api/` as serverless functions alongside the Vite SPA.
+
+> **Note:** Redeploy after adding or changing environment variables.
 
 ## API Integration Guide
 

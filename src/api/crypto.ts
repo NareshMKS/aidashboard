@@ -1,6 +1,8 @@
 import { apiClient } from '@/lib/axios'
 import type { CryptoPrice } from '@/types'
 
+const CRYPTO_BASE = '/api/crypto'
+
 interface CoinGeckoMarket {
   id: string
   symbol: string
@@ -14,17 +16,14 @@ interface CoinGeckoMarket {
 export async function fetchCryptoPrice(
   ids: string[] = ['bitcoin', 'ethereum', 'solana'],
 ): Promise<CryptoPrice[]> {
-  const { data } = await apiClient.get<CoinGeckoMarket[]>(
-    'https://api.coingecko.com/api/v3/coins/markets',
-    {
-      params: {
-        vs_currency: 'usd',
-        ids: ids.join(','),
-        sparkline: true,
-        price_change_percentage: '24h',
-      },
+  const { data } = await apiClient.get<CoinGeckoMarket[]>(`${CRYPTO_BASE}/coins/markets`, {
+    params: {
+      vs_currency: 'usd',
+      ids: ids.join(','),
+      sparkline: true,
+      price_change_percentage: '24h',
     },
-  )
+  })
 
   return data.map((coin) => ({
     id: coin.id,
@@ -42,10 +41,9 @@ interface CoinSearchResponse {
 }
 
 export async function fetchCryptoBySymbol(symbol: string): Promise<CryptoPrice> {
-  const searchRes = await apiClient.get<CoinSearchResponse>(
-    'https://api.coingecko.com/api/v3/search',
-    { params: { query: symbol } },
-  )
+  const searchRes = await apiClient.get<CoinSearchResponse>(`${CRYPTO_BASE}/search`, {
+    params: { query: symbol },
+  })
 
   const match = searchRes.data.coins?.[0]
   if (!match) {
